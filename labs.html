@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labs | BlockOne987</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="overlay"></div>
+    <div class="scanlines"></div>
+    <div class="custom-cursor" id="cursor"></div>
+
+    <div class="container">
+        <nav class="main-nav">
+            <div class="logo"><a href="index.html">&lt;BlockOne987/&gt;</a></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="graphify-out/graph.html">Graph</a></li>
+                <li><a href="snippets.html">Snippets</a></li>
+                <li><a href="docs.html">Docs</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="labs.html" class="active">Labs</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <div class="page-header">
+                <h1><span class="glitch" data-text="LABS">LABS</span></h1>
+                <p>Experimental projects and prototypes.</p>
+            </div>
+
+            <div class="labs-grid">
+                <article class="lab-card">
+                    <h3>WebGL Matrix Rain <span class="lab-status experimental">Experimental</span></h3>
+                    <p>GPU-accelerated matrix rain effect using WebGL shaders instead of Canvas 2D.</p>
+                    <p>Initial tests show 2-3x better performance on high-DPI displays compared to Canvas 2D.</p>
+                    <div class="project-meta">
+                        <span class="tag">WebGL</span>
+                        <span class="tag">GLSL</span>
+                        <span class="tag">Performance</span>
+                    </div>
+                    <a href="#" class="lab-link">View Experiments &rarr;</a>
+                </article>
+
+                <article class="lab-card">
+                    <h3>Interactive Graph <span class="lab-status stable">Stable</span></h3>
+                    <p>D3.js force-directed graph with zoom, pan, and drag controls.</p>
+                    <p>Built as part of the graphify integration to visualize code relationships.</p>
+                    <div class="project-meta">
+                        <span class="tag">D3.js</span>
+                        <span class="tag">Visualization</span>
+                    </div>
+                    <a href="graphify-out/graph.html" class="lab-link">Open Graph &rarr;</a>
+                </article>
+
+                <article class="lab-card coming-soon">
+                    <h3>AI Code Review <span class="lab-status experimental">Experimental</span></h3>
+                    <p>Integrate AI for automated code review and suggestions.</p>
+                    <div class="project-meta">
+                        <span class="tag">AI</span>
+                        <span class="tag">ML</span>
+                    </div>
+                    <span class="lab-link">Coming Soon</span>
+                </article>
+
+                <article class="lab-card coming-soon">
+                    <h3>CLI Tools <span class="lab-status experimental">Experimental</span></h3>
+                    <p>Developer CLI utilities for common tasks.</p>
+                    <div class="project-meta">
+                        <span class="tag">CLI</span>
+                        <span class="tag">Python</span>
+                    </div>
+                    <span class="lab-link">Coming Soon</span>
+                </article>
+            </div>
+        </main>
+
+        <footer>
+            <div class="breadcrumbs">
+                <a href="index.html">&larr; Home</a> / Labs
+            </div>
+            <div class="status">
+                <span class="status-dot"></span>
+                <span>SYSTEM ONLINE</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="shared.js"></script>
+</body>
+</html>

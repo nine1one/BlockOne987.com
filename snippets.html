@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snippets | BlockOne987</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="overlay"></div>
+    <div class="scanlines"></div>
+    <div class="custom-cursor" id="cursor"></div>
+
+    <div class="container">
+        <nav class="main-nav">
+            <div class="logo"><a href="index.html">&lt;BlockOne987/&gt;</a></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="graphify-out/graph.html">Graph</a></li>
+                <li><a href="snippets.html" class="active">Snippets</a></li>
+                <li><a href="docs.html">Docs</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="labs.html">Labs</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <div class="page-header">
+                <h1><span class="glitch" data-text="SNIPPETS">SNIPPETS</span></h1>
+                <p>Code snippets and templates for quick reference.</p>
+            </div>
+
+            <div class="snippets-grid">
+                <article class="snippet-card">
+                    <h3>Matrix Rain Effect</h3>
+                    <p>Classic falling code animation using HTML5 Canvas.</p>
+                    <div class="code-block"><pre>const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+const drops = Array(columns).fill(1);
+
+function draw() {
+    ctx.fillStyle = 'rgba(0,0,0,0.03)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+    
+    for(let i = 0; i < drops.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+        drops[i]++;
+    }
+}
+setInterval(draw, 50);</pre></div>
+                    <a href="#" class="snippet-link">Copy to Clipboard</a>
+                </article>
+
+                <article class="snippet-card">
+                    <h3>CSS Glitch Text</h3>
+                    <p>Cyberpunk glitch effect using CSS clip-path animations.</p>
+                    <div class="code-block"><pre>.glitch {
+  position: relative;
+}
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+}
+.glitch::before {
+  color: #0ff;
+  animation: glitch-1 0.3s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+.glitch::after {
+  color: #f0f;
+  animation: glitch-2 0.3s infinite;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}</pre></div>
+                    <a href="#" class="snippet-link">Copy to Clipboard</a>
+                </article>
+
+                <article class="snippet-card">
+                    <h3>Custom Cursor</h3>
+                    <p>Crosshair cursor that expands on interactive elements.</p>
+                    <div class="code-block"><pre>.custom-cursor {
+  position: fixed;
+  width: 20px; height: 20px;
+  border: 1px solid #0f0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+}
+.custom-cursor.hover {
+  width: 50px; height: 50px;
+  border-color: #0ff;
+}</pre></div>
+                    <a href="#" class="snippet-link">Copy to Clipboard</a>
+                </article>
+
+                <article class="snippet-card">
+                    <h3>D3.js Force Graph</h3>
+                    <p>Interactive force-directed graph visualization.</p>
+                    <div class="code-block"><pre>const simulation = d3.forceSimulation(nodes)
+  .force("link", d3.forceLink(links).id(d => d.id))
+  .force("charge", d3.forceManyBody().strength(-300))
+  .force("center", d3.forceCenter(w/2, h/2));
+
+// Zoom behavior
+const zoom = d3.zoom()
+  .scaleExtent([0.2, 4])
+  .on("zoom", (e) => g.attr("transform", e.transform));</pre></div>
+                    <a href="#" class="snippet-link">Copy to Clipboard</a>
+                </article>
+            </div>
+        </main>
+
+        <footer>
+            <div class="breadcrumbs">
+                <a href="index.html">&larr; Home</a> / Snippets
+            </div>
+            <div class="status">
+                <span class="status-dot"></span>
+                <span>SYSTEM ONLINE</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="shared.js"></script>
+</body>
+</html>

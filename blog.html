@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | BlockOne987</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="overlay"></div>
+    <div class="scanlines"></div>
+    <div class="custom-cursor" id="cursor"></div>
+
+    <div class="container">
+        <nav class="main-nav">
+            <div class="logo"><a href="index.html">&lt;BlockOne987/&gt;</a></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="graphify-out/graph.html">Graph</a></li>
+                <li><a href="snippets.html">Snippets</a></li>
+                <li><a href="docs.html">Docs</a></li>
+                <li><a href="blog.html" class="active">Blog</a></li>
+                <li><a href="labs.html">Labs</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <div class="page-header">
+                <h1><span class="glitch" data-text="BLOG">BLOG</span></h1>
+                <p>Tech writeups and tutorials.</p>
+            </div>
+
+            <div class="blog-grid">
+                <article class="blog-card">
+                    <div class="date">2026-04-22</div>
+                    <h3>Building a Matrix-Themed Developer Portal</h3>
+                    <p>How I created this website with WebGL effects, custom cursors, and interactive knowledge graph visualization.</p>
+                    <p>This project started as a simple "choose your destiny" landing page inspired by The Matrix movie, but evolved into a full developer portal with cyberpunk aesthetics.</p>
+                    <a href="#" class="blog-link">Read More &rarr;</a>
+                </article>
+
+                <article class="blog-card">
+                    <div class="date">2026-04-22</div>
+                    <h3>Knowledge Graph with graphify</h3>
+                    <p>Using graphify to extract entities and relationships from code and documentation, then visualizing them with D3.js.</p>
+                    <p>The graph shows how all the components connect - from WebGL shaders to CSS animations, from the sitemap to each menu item.</p>
+                    <a href="graphify-out/graph.html" class="blog-link">View Graph &rarr;</a>
+                </article>
+
+                <article class="blog-card">
+                    <div class="date">2026-04-22</div>
+                    <h3>WebGL vs Canvas 2D Performance</h3>
+                    <p>Comparing WebGL and Canvas 2D for the Matrix rain effect - WebGL is much smoother on high-DPI displays.</p>
+                    <p>Initial tests showed canvas 2D chugging at 60fps on 4K displays, while WebGL maintained smooth frame rates.</p>
+                    <a href="#" class="blog-link">Read More &rarr;</a>
+                </article>
+
+                <article class="blog-card coming-soon">
+                    <div class="date">Coming Soon</div>
+                    <h3>CSS Animation Deep Dive</h3>
+                    <p>Breaking down the glitch, fade, and pulse animations used throughout the site.</p>
+                    <a href="#" class="blog-link">Coming Soon</a>
+                </article>
+            </div>
+        </main>
+
+        <footer>
+            <div class="breadcrumbs">
+                <a href="index.html">&larr; Home</a> / Blog
+            </div>
+            <div class="status">
+                <span class="status-dot"></span>
+                <span>SYSTEM ONLINE</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="shared.js"></script>
+</body>
+</html>
