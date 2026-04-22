@@ -9,283 +9,62 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --matrix-green: #00ff41;
-            --matrix-dark: #003b00;
-            --matrix-light: #0d0208;
-            --accent-cyan: #00fff5;
-            --accent-pink: #ff00ff;
-        }
-
-        body {
-            background: #000;
-            overflow-x: hidden;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            color: var(--matrix-green);
-            cursor: crosshair;
-        }
-
-        #canvas { position: fixed; top: 0; left: 0; z-index: 0; }
-
-        .overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
-            pointer-events: none; z-index: 1;
-        }
-
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0px, rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 3px);
-            pointer-events: none; z-index: 2; opacity: 0.3;
-        }
-
-        .container {
-            position: relative; z-index: 10;
-            min-height: 100vh;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid rgba(0, 255, 65, 0.2);
-            animation: slideDown 0.8s ease-out;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 0.1rem;
-            position: relative;
-        }
-
+        :root { --matrix-green: #00ff41; --accent-cyan: #00fff5; --accent-pink: #ff00ff; }
+        body { background: #000; overflow-x: hidden; font-family: 'JetBrains Mono', monospace; color: var(--matrix-green); cursor: crosshair; }
+        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.5) 100%); pointer-events: none; z-index: 1; }
+        .container { position: relative; z-index: 10; min-height: 100vh; padding: 2rem; display: flex; flex-direction: column; }
+        header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 2rem; border-bottom: 1px solid rgba(0,255,65,0.2); animation: slideDown 0.8s ease-out; }
+        @keyframes slideDown { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .logo { font-size: 1.8rem; font-weight: 700; letter-spacing: 0.1rem; }
         .logo a { color: var(--matrix-green); text-decoration: none; }
         .logo a:hover { text-shadow: 0 0 10px var(--matrix-green), 0 0 20px var(--matrix-green); }
-        .logo::after { content: '_'; animation: blink 1s infinite; }
-
-        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
-
         nav { display: flex; gap: 2rem; }
-
-        nav a {
-            color: var(--matrix-green);
-            text-decoration: none;
-            font-size: 0.85rem;
-            letter-spacing: 0.15rem;
-            text-transform: uppercase;
-            position: relative;
-            padding: 0.5rem 0;
-            transition: all 0.3s ease;
-            opacity: 0.7;
-        }
-
+        nav a { color: var(--matrix-green); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.15rem; text-transform: uppercase; padding: 0.5rem 0; transition: all 0.3s; opacity: 0.7; }
         nav a:hover, nav a.active { opacity: 1; text-shadow: 0 0 15px var(--matrix-green); }
-        nav a::before { content: '[ '; opacity: 0; transition: opacity 0.3s; }
-        nav a::after { content: ' ]'; opacity: 0; transition: opacity 0.3s; }
+        nav a::before, nav a::after { opacity: 0; }
         nav a:hover::before, nav a:hover::after, nav a.active::before, nav a.active::after { opacity: 0.7; }
-
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 4rem 0;
-        }
-
-        .hero h1 {
-            font-size: clamp(2rem, 5vw, 4rem);
-            font-weight: 700;
-            margin-bottom: 1rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        .hero h1 .glitch { position: relative; animation: glitch 2s infinite; }
-
-        .hero h1 .glitch::before, .hero h1 .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-        }
-
-        .hero h1 .glitch::before {
-            color: var(--accent-cyan);
-            animation: glitch-1 0.3s infinite;
-            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-        }
-
-        .hero h1 .glitch::after {
-            color: var(--accent-pink);
-            animation: glitch-2 0.3s infinite;
-            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-        }
-
-        @keyframes glitch { 0%, 90%, 100% { transform: translate(0); } 92% { transform: translate(-2px, 1px); } 94% { transform: translate(2px, -1px); } }
-        @keyframes glitch-1 { 0%, 100% { transform: translate(0); } 20% { transform: translate(-3px, 0); } 40% { transform: translate(3px, 0); } }
-        @keyframes glitch-2 { 0%, 100% { transform: translate(0); } 20% { transform: translate(3px, 0); } 40% { transform: translate(-3px, 0); } }
-
-        .hero p {
-            font-size: 1rem;
-            opacity: 0.7;
-            max-width: 500px;
-            line-height: 1.8;
-            animation: fadeIn 1s ease-out 0.3s both;
-        }
-
+        nav a::before { content: '[ '; }
+        nav a::after { content: ' ]'; }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 4rem 0; }
+        .hero h1 { font-size: clamp(2rem, 5vw, 4rem); font-weight: 700; margin-bottom: 1rem; text-shadow: 0 0 20px var(--matrix-green), 0 0 40px var(--matrix-green); letter-spacing: 0.2rem; }
+        .hero p { font-size: 1rem; opacity: 0.7; max-width: 500px; line-height: 1.8; animation: fadeIn 1s ease-out 0.3s both; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 0.7; transform: translateY(0); } }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .card {
-            background: rgba(0, 20, 0, 0.6);
-            border: 1px solid rgba(0, 255, 65, 0.2);
-            padding: 1.8rem;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: cardIn 0.6s ease-out forwards;
-        }
-
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .card { background: rgba(0,20,0,0.6); border: 1px solid rgba(0,255,65,0.2); padding: 1.8rem; transition: all 0.4s; position: relative; opacity: 0; transform: translateY(30px); animation: cardIn 0.6s ease-out forwards; }
         .card:nth-child(1) { animation-delay: 0.1s; }
         .card:nth-child(2) { animation-delay: 0.2s; }
         .card:nth-child(3) { animation-delay: 0.3s; }
         .card:nth-child(4) { animation-delay: 0.4s; }
-        .card:nth-child(5) { animation-delay: 0.5s; }
-
         @keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
-
-        .card:hover {
-            border-color: var(--matrix-green);
-            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2), inset 0 0 30px rgba(0, 255, 65, 0.05);
-            transform: translateY(-5px);
-        }
-
-        .card-icon { font-size: 2rem; margin-bottom: 1rem; }
-
-        .card h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            color: var(--matrix-green);
-        }
-
-        .card p {
-            font-size: 0.85rem;
-            opacity: 0.6;
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-
+        .card:hover { border-color: var(--matrix-green); box-shadow: 0 0 30px rgba(0,255,65,0.3), inset 0 0 20px rgba(0,255,65,0.1); transform: translateY(-5px); background: rgba(0,40,0,0.7); }
+        .card-icon { font-size: 2.5rem; margin-bottom: 1rem; filter: grayscale(0.3); }
+        .card:hover .card-icon { filter: grayscale(0); }
+        .card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--matrix-green); }
+        .card p { font-size: 0.85rem; opacity: 0.6; margin-bottom: 1rem; line-height: 1.6; }
         .card-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-
-        .tag {
-            background: rgba(0, 255, 65, 0.1);
-            border: 1px solid rgba(0, 255, 65, 0.3);
-            padding: 0.2rem 0.6rem;
-            font-size: 0.7rem;
-            border-radius: 3px;
-            text-transform: uppercase;
-        }
-
-        .card-link {
-            color: var(--accent-cyan);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-        }
-
+        .tag { background: rgba(0,255,65,0.1); border: 1px solid rgba(0,255,65,0.3); padding: 0.2rem 0.6rem; font-size: 0.7rem; border-radius: 3px; text-transform: uppercase; }
+        .card-link { color: var(--accent-cyan); text-decoration: none; font-size: 0.85rem; }
         .card-link:hover { text-shadow: 0 0 10px var(--accent-cyan); }
-
         .coming-soon { opacity: 0.5; }
-        .coming-soon::after {
-            content: 'COMING SOON';
-            position: absolute;
-            top: 1rem; right: 1rem;
-            background: rgba(0, 255, 65, 0.2);
-            padding: 0.2rem 0.5rem;
-            font-size: 0.6rem;
-            border-radius: 3px;
-        }
-
-        footer {
-            margin-top: auto;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(0, 255, 65, 0.15);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
-            opacity: 0.5;
-            animation: fadeIn 1s ease-out 1s both;
-        }
-
+        .coming-soon::after { content: 'COMING SOON'; position: absolute; top: 1rem; right: 1rem; background: rgba(0,255,65,0.2); padding: 0.2rem 0.5rem; font-size: 0.6rem; border-radius: 3px; }
+        footer { margin-top: auto; padding-top: 2rem; border-top: 1px solid rgba(0,255,65,0.15); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; opacity: 0.5; }
         .breadcrumbs a { color: var(--matrix-green); text-decoration: none; }
-        .breadcrumbs a:hover { text-shadow: 0 0 10px var(--matrix-green); }
-
         .status { display: flex; align-items: center; gap: 0.5rem; }
-
-        .status-dot {
-            width: 8px; height: 8px;
-            background: var(--matrix-green);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-            box-shadow: 0 0 10px var(--matrix-green);
-        }
-
-        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
-
-        .custom-cursor {
-            position: fixed;
-            width: 20px; height: 20px;
-            border: 1px solid var(--matrix-green);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s, width 0.3s, height 0.3s;
-            mix-blend-mode: difference;
-        }
-
+        .status-dot { width: 8px; height: 8px; background: var(--matrix-green); border-radius: 50%; animation: pulse 2s infinite; box-shadow: 0 0 10px var(--matrix-green); }
+        @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+        .custom-cursor { position: fixed; width: 20px; height: 20px; border: 1px solid var(--matrix-green); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: difference; }
         .custom-cursor.hover { width: 50px; height: 50px; border-color: var(--accent-cyan); }
-
-        @media (max-width: 768px) {
-            header { flex-direction: column; gap: 1rem; }
-            nav { flex-wrap: wrap; justify-content: center; gap: 1rem; }
-            .card-grid { grid-template-columns: 1fr; }
-            footer { flex-direction: column; gap: 1rem; text-align: center; }
-            .custom-cursor { display: none; }
-        }
+        @media (max-width: 768px) { header { flex-direction: column; gap: 1rem; } nav { flex-wrap: wrap; gap: 1rem; } .card-grid { grid-template-columns: 1fr; } footer { flex-direction: column; gap: 1rem; } }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+    <canvas id="matrix-canvas"></canvas>
     <div class="overlay"></div>
-    <div class="scanlines"></div>
     <div class="custom-cursor" id="cursor"></div>
-
     <div class="container">
         <header>
-            <div class="logo"><a href="index.html">&lt;BlockOne987/&gt;</a></div>
+            <div class="logo"><a href="index.html">BlockOne987</a></div>
             <nav>
                 <a href="index.html">Home</a>
                 <a href="projects.html" class="active">Projects</a>
@@ -297,105 +76,57 @@
                 <a href="contact.html">Contact</a>
             </nav>
         </header>
-
         <main>
             <div class="hero">
-                <h1><span class="glitch" data-text="PROJECTS">PROJECTS</span></h1>
+                <h1>PROJECTS</h1>
                 <p>Code repositories and open source work.</p>
             </div>
-
             <div class="card-grid">
                 <div class="card">
                     <div class="card-icon">&#x1F4BB;</div>
                     <h3>BlockOne987.com</h3>
                     <p>This website - Matrix-themed developer portal with WebGL effects.</p>
-                    <div class="card-meta">
-                        <span class="tag">HTML</span>
-                        <span class="tag">WebGL</span>
-                        <span class="tag">CSS3</span>
-                    </div>
+                    <div class="card-meta"><span class="tag">HTML</span><span class="tag">WebGL</span><span class="tag">CSS3</span></div>
                     <a href="https://github.com/blockone987/blockone987" target="_blank" class="card-link">View on GitHub &rarr;</a>
                 </div>
-
                 <div class="card">
                     <div class="card-icon">&#x1F9F0;</div>
                     <h3>Knowledge Graph</h3>
                     <p>Interactive knowledge graph visualization built with D3.js and graphify.</p>
-                    <div class="card-meta">
-                        <span class="tag">D3.js</span>
-                        <span class="tag">WebGL</span>
-                    </div>
+                    <div class="card-meta"><span class="tag">D3.js</span><span class="tag">WebGL</span></div>
                     <a href="graphify-out/graph.html" class="card-link">Open Graph &rarr;</a>
                 </div>
-
                 <div class="card">
                     <div class="card-icon">&#x1F6E0;</div>
                     <h3>GENAi Tools</h3>
                     <p>Developer utilities for working with safetensors and AI models.</p>
-                    <div class="card-meta">
-                        <span class="tag">Python</span>
-                        <span class="tag">CLI</span>
-                    </div>
+                    <div class="card-meta"><span class="tag">Python</span><span class="tag">CLI</span></div>
                     <a href="tools/GENAi/inspect_safetensors.py" class="card-link">View Code &rarr;</a>
                 </div>
-
                 <div class="card coming-soon">
                     <div class="card-icon">&#x1F52C;</div>
                     <h3>Project Template</h3>
                     <p>Start a new project with this template.</p>
-                    <div class="card-meta">
-                        <span class="tag">Template</span>
-                    </div>
+                    <div class="card-meta"><span class="tag">Template</span></div>
                     <span class="card-link">Coming Soon</span>
                 </div>
             </div>
         </main>
-
         <footer>
-            <div class="breadcrumbs">
-                <a href="index.html">&larr; Home</a> / Projects
-            </div>
-            <div class="status">
-                <span class="status-dot"></span>
-                <span>SYSTEM ONLINE</span>
-            </div>
+            <div class="breadcrumbs"><a href="index.html">&larr; Home</a> / Projects</div>
+            <div class="status"><span class="status-dot"></span><span>SYSTEM ONLINE</span></div>
         </footer>
     </div>
-
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
+        const canvas = document.getElementById('matrix-canvas'), ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()*&^%+-=[]{}|;:,.<>?/~';
-        const charArray = chars.split('');
-        const fontSize = 14;
-        const columns = Math.floor(canvas.width / fontSize);
-        const drops = Array(columns).fill(1);
-
-        function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#00ff41';
-            ctx.font = fontSize + 'px Fira Code, monospace';
-            for (let i = 0; i < drops.length; i++) {
-                const char = charArray[Math.floor(Math.random() * charArray.length)];
-                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            }
-        }
-
-        setInterval(draw, 50);
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-
+        const charArray = chars.split(''), fontSize = 14, drops = Array(Math.floor(canvas.width / fontSize)).fill(1);
+        function draw() { ctx.fillStyle = 'rgba(0,0,0,0.03)'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#00ff41'; ctx.font = fontSize + 'px monospace'; for (let i = 0; i < drops.length; i++) { ctx.fillText(charArray[Math.floor(Math.random() * charArray.length)], i * fontSize, drops[i] * fontSize); if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++; } }
+        setInterval(draw, 50); window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
         const cursor = document.getElementById('cursor');
-        document.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
-        document.querySelectorAll('a, .card').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-        });
+        document.addEventListener('mousemove', e => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
+        document.querySelectorAll('a, .card').forEach(el => { el.addEventListener('mouseenter', () => cursor.classList.add('hover')); el.addEventListener('mouseleave', () => cursor.classList.remove('hover')); });
     </script>
 </body>
 </html>
