@@ -1,0 +1,69 @@
+{
+  "communities": {
+    "0": [
+      "tools_genai_inspect_safetensors_py",
+      "inspect_safetensors_ensure_dependencies",
+      "inspect_safetensors_get_safe_tensor_location",
+      "inspect_safetensors_display_tensor_keys",
+      "inspect_safetensors_display_tensor_metadata",
+      "inspect_safetensors_main",
+      "webgl_context",
+      "canvas_element",
+      "vertex_shader",
+      "fragment_shader",
+      "matrix_rain_effect",
+      "shader_program",
+      "gpu_accelerated_graphics",
+      "slideDown_animation",
+      "glitch_animation",
+      "fadeIn_animation",
+      "pulse_animation",
+      "cardIn_animation",
+      "crt_scanlines",
+      "custom_cursor",
+      "mouse_tracking",
+      "live_coordinates",
+      "click_glitch_effect",
+      "sitemap",
+      "projects_page",
+      "tools_page",
+      "snippets_page",
+      "docs_page",
+      "blog_page",
+      "labs_page",
+      "github_page",
+      "contact_section"
+    ]
+  },
+  "cohesion": {
+    "0": 0.85
+  },
+  "gods": [
+    {
+      "id": "sitemap",
+      "label": "Developer Sitemap",
+      "degree": 8
+    },
+    {
+      "id": "inspect_safetensors_main",
+      "label": "main()",
+      "degree": 4
+    },
+    {
+      "id": "webgl_context",
+      "label": "WebGL Context",
+      "degree": 3
+    },
+    {
+      "id": "canvas_element",
+      "label": "Canvas Element",
+      "degree": 2
+    },
+    {
+      "id": "fragment_shader",
+      "label": "Fragment Shader",
+      "degree": 2
+    }
+  ],
+  "surprises": []
+}
