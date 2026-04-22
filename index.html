@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlockOne987 | Developer Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -11,25 +14,65 @@
             box-sizing: border-box;
         }
 
-        body {
-            background-color: #000;
-            overflow-x: hidden;
-            font-family: 'Fira Code', 'Courier New', monospace;
-            color: #0F0;
+        :root {
+            --matrix-green: #00ff41;
+            --matrix-dark: #003b00;
+            --matrix-light: #0d0208;
+            --accent-cyan: #00fff5;
+            --accent-pink: #ff00ff;
         }
 
-        #matrix-canvas {
+        body {
+            background: #000;
+            overflow-x: hidden;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            color: var(--matrix-green);
+            cursor: crosshair;
+        }
+
+        #canvas {
             position: fixed;
             top: 0;
             left: 0;
             z-index: 0;
         }
 
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.3;
+        }
+
         .container {
             position: relative;
-            z-index: 1;
+            z-index: 10;
             min-height: 100vh;
             padding: 2rem;
+            display: flex;
+            flex-direction: column;
         }
 
         header {
@@ -37,18 +80,39 @@
             justify-content: space-between;
             align-items: center;
             padding-bottom: 2rem;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+            border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            letter-spacing: 0.2rem;
-            text-shadow: 0 0 10px #0F0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 0.1rem;
+            position: relative;
         }
 
-        .logo span {
-            color: #00FF00;
+        .logo .bracket {
+            color: var(--accent-cyan);
+        }
+
+        .logo .name {
+            color: var(--matrix-green);
+            text-shadow: 0 0 10px var(--matrix-green), 0 0 20px var(--matrix-green);
+        }
+
+        .logo::after {
+            content: '_';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
         nav {
@@ -57,21 +121,43 @@
         }
 
         nav a {
-            color: #0F0;
+            color: var(--matrix-green);
             text-decoration: none;
-            font-size: 0.9rem;
-            letter-spacing: 0.1rem;
-            opacity: 0.7;
-            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            letter-spacing: 0.15rem;
             text-transform: uppercase;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        nav a::before {
+            content: '[ ';
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        nav a::after {
+            content: ' ]';
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
         nav a:hover {
-            opacity: 1;
-            text-shadow: 0 0 10px #0F0;
+            text-shadow: 0 0 15px var(--matrix-green);
+            transform: scale(1.05);
+        }
+
+        nav a:hover::before,
+        nav a:hover::after {
+            opacity: 0.7;
         }
 
         main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             padding: 4rem 0;
         }
 
@@ -80,33 +166,118 @@
         }
 
         .hero h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 700;
             margin-bottom: 1rem;
-            text-shadow: 0 0 10px #0F0, 0 0 20px #0F0;
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero h1 .glitch {
+            position: relative;
+            animation: glitch 2s infinite;
+        }
+
+        .hero h1 .glitch::before,
+        .hero h1 .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero h1 .glitch::before {
+            color: var(--accent-cyan);
+            animation: glitch-1 0.3s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        }
+
+        .hero h1 .glitch::after {
+            color: var(--accent-pink);
+            animation: glitch-2 0.3s infinite;
+            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            92% { transform: translate(-2px, 1px); }
+            94% { transform: translate(2px, -1px); }
+            96% { transform: translate(-1px, 2px); }
+            98% { transform: translate(1px, -2px); }
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-3px, 0); }
+            40% { transform: translate(3px, 0); }
+            60% { transform: translate(-2px, 0); }
+            80% { transform: translate(2px, 0); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(3px, 0); }
+            40% { transform: translate(-3px, 0); }
+            60% { transform: translate(2px, 0); }
+            80% { transform: translate(-2px, 0); }
         }
 
         .hero p {
             font-size: 1rem;
             opacity: 0.7;
-            max-width: 600px;
+            max-width: 500px;
+            line-height: 1.8;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 0.7; transform: translateY(0); }
+        }
+
+        .hero p .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background: var(--matrix-green);
+            margin-left: 5px;
+            animation: blink 1s infinite;
+            vertical-align: text-bottom;
         }
 
         .sitemap {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.5rem;
         }
 
         .site-link {
-            background: rgba(0, 20, 0, 0.8);
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            padding: 1.5rem;
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            padding: 1.8rem;
             text-decoration: none;
-            color: #0F0;
-            transition: all 0.3s ease;
+            color: var(--matrix-green);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardIn 0.6s ease-out forwards;
+        }
+
+        .site-link:nth-child(1) { animation-delay: 0.1s; }
+        .site-link:nth-child(2) { animation-delay: 0.2s; }
+        .site-link:nth-child(3) { animation-delay: 0.3s; }
+        .site-link:nth-child(4) { animation-delay: 0.4s; }
+        .site-link:nth-child(5) { animation-delay: 0.5s; }
+        .site-link:nth-child(6) { animation-delay: 0.6s; }
+        .site-link:nth-child(7) { animation-delay: 0.7s; }
+        .site-link:nth-child(8) { animation-delay: 0.8s; }
+
+        @keyframes cardIn {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .site-link::before {
@@ -115,66 +286,142 @@
             top: 0;
             left: -100%;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--matrix-green), transparent);
             transition: left 0.5s ease;
+        }
+
+        .site-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            transition: right 0.5s ease 0.2s;
+        }
+
+        .site-link:hover {
+            border-color: var(--matrix-green);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 65, 0.2),
+                inset 0 0 30px rgba(0, 255, 65, 0.05);
+            transform: translateY(-5px) scale(1.02);
         }
 
         .site-link:hover::before {
             left: 100%;
         }
 
-        .site-link:hover {
-            border-color: #0F0;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3), inset 0 0 20px rgba(0, 255, 0, 0.05);
-            transform: translateY(-2px);
+        .site-link:hover::after {
+            right: 100%;
+        }
+
+        .site-link:hover h3 {
+            text-shadow: 0 0 15px var(--matrix-green);
         }
 
         .site-link h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .site-link h3 .icon {
+            font-size: 1.4rem;
+            opacity: 0.8;
+        }
+
+        .site-link p {
+            font-size: 0.85rem;
+            opacity: 0.5;
+            line-height: 1.6;
+            transition: opacity 0.3s;
+        }
+
+        .site-link:hover p {
+            opacity: 0.8;
+        }
+
+        .site-link .index {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.7rem;
+            opacity: 0.3;
+            font-family: 'Fira Code', monospace;
+        }
+
+        footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 255, 65, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            animation: fadeIn 1s ease-out 1s both;
+        }
+
+        .status {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .site-link h3::before {
-            content: '>';
-            opacity: 0.5;
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--matrix-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--matrix-green);
         }
 
-        .site-link p {
-            font-size: 0.85rem;
-            opacity: 0.6;
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
         }
 
-        .site-link .arrow {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--matrix-green);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s, width 0.3s, height 0.3s;
+            mix-blend-mode: difference;
         }
 
-        .site-link:hover .arrow {
-            opacity: 1;
+        .custom-cursor.hover {
+            width: 50px;
+            height: 50px;
+            border-color: var(--accent-cyan);
         }
 
-        footer {
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(0, 255, 0, 0.2);
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            opacity: 0.5;
+        .coords {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            font-size: 0.7rem;
+            opacity: 0.4;
+            z-index: 10;
+            font-family: 'Fira Code', monospace;
         }
 
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
-                gap: 1rem;
+                gap: 1.5rem;
+                text-align: center;
             }
 
             nav {
@@ -183,124 +430,246 @@
                 gap: 1rem;
             }
 
-            .hero h1 {
-                font-size: 1.8rem;
+            .sitemap {
+                grid-template-columns: 1fr;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .custom-cursor {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <canvas id="matrix-canvas"></canvas>
-    
+    <canvas id="canvas"></canvas>
+    <div class="overlay"></div>
+    <div class="scanlines"></div>
+    <div class="custom-cursor" id="cursor"></div>
+    <div class="coords" id="coords">X: 000 | Y: 000</div>
+
     <div class="container">
         <header>
-            <div class="logo">&lt;<span>BlockOne987</span>/&gt;</div>
+            <div class="logo">
+                <span class="bracket">&lt;</span><span class="name">BlockOne987</span><span class="bracket">/&gt;</span>
+            </div>
             <nav>
-                <a href="#sitemap">Sitemap</a>
-                <a href="https://github.com/blockone987" target="_blank">GitHub</a>
-                <a href="#about">About</a>
+                <a href="#sitemap" data-hover>Sitemap</a>
+                <a href="https://github.com/blockone987" target="_blank" data-hover>GitHub</a>
+                <a href="#about" data-hover>About</a>
             </nav>
         </header>
 
         <main>
             <div class="hero">
-                <h1>GREETINGS, DEVELOPER</h1>
-                <p>Welcome to the digital dojo. Select your path from the sitemap below.</p>
+                <h1>
+                    <span class="glitch" data-text="GREETINGS, DEVELOPER">GREETINGS, DEVELOPER</span>
+                </h1>
+                    <p>Welcome to the digital dojo. Select your path from the sitemap below.<span class="cursor"></span></p>
             </div>
 
             <div class="sitemap" id="sitemap">
-                <a href="/projects" class="site-link">
-                    <h3>Projects</h3>
+                <a href="/projects" class="site-link" data-hover>
+                    <span class="index">01</span>
+                    <h3><span class="icon">&#x1F4BB;</span> Projects</h3>
                     <p>Code repositories and open source work</p>
-                    <span class="arrow">&rarr;</span>
                 </a>
                 
-                <a href="/tools" class="site-link">
-                    <h3>Tools</h3>
+                <a href="/tools" class="site-link" data-hover>
+                    <span class="index">02</span>
+                    <h3><span class="icon">&#x1F6E0;</span> Tools</h3>
                     <p>Developer utilities and calculators</p>
-                    <span class="arrow">&rarr;</span>
                 </a>
                 
-                <a href="/snippets" class="site-link">
-                    <h3>Snippets</h3>
+                <a href="/snippets" class="site-link" data-hover>
+                    <span class="index">03</span>
+                    <h3><span class="icon">&#x1F4DD;</span> Snippets</h3>
                     <p>Code snippets and templates</p>
-                    <span class="arrow">&rarr;</span>
                 </a>
                 
-                <a href="/docs" class="site-link">
-                    <h3>Docs</h3>
+                <a href="/docs" class="site-link" data-hover>
+                    <span class="index">04</span>
+                    <h3><span class="icon">&#x1F4DA;</span> Docs</h3>
                     <p>API documentation and guides</p>
-                    <span class="arrow">&rarr;</span>
                 </a>
                 
-                <a href="/blog" class="site-link">
-                    <h3>Blog</h3>
+                <a href="/blog" class="site-link" data-hover>
+                    <span class="index">05</span>
+                    <h3><span class="icon">&#x1F4DD;</span> Blog</h3>
                     <p>Tech writeups and tutorials</p>
-                    <span class="arrow">&rarr;</span>
                 </a>
                 
-                <a href="/labs" class="site-link">
-                    <h3>Labs</h3>
+                <a href="/labs" class="site-link" data-hover>
+                    <span class="index">06</span>
+                    <h3><span class="icon">&#x1F52C;</span> Labs</h3>
                     <p>Experimental projects and prototypes</p>
-                    <span class="arrow">&rarr;</span>
                 </a>
                 
-                <a href="https://github.com/blockone987" target="_blank" class="site-link">
-                    <h3>GitHub</h3>
+                <a href="https://github.com/blockone987" target="_blank" class="site-link" data-hover>
+                    <span class="index">07</span>
+                    <h3><span class="icon">&#x1F4BB;</span> GitHub</h3>
                     <p>Source code and contributions</p>
-                    <span class="arrow">&rarr;</span>
                 </a>
                 
-                <a href="#contact" class="site-link">
-                    <h3>Contact</h3>
+                <a href="#contact" class="site-link" data-hover>
+                    <span class="index">08</span>
+                    <h3><span class="icon">&#x1F4E7;</span> Contact</h3>
                     <p>Get in touch or collaborate</p>
-                    <span class="arrow">&rarr;</span>
                 </a>
             </div>
         </main>
 
         <footer>
             <div>BlockOne987 &copy; 2026</div>
-            <div>System Status: ONLINE</div>
+            <div class="status">
+                <span class="status-dot"></span>
+                <span>SYSTEM ONLINE</span>
+            </div>
         </footer>
     </div>
 
     <script>
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
+        // WebGL Matrix Rain
+        const canvas = document.getElementById('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
 
         function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            if (gl) {
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
         }
         resize();
         window.addEventListener('resize', resize);
 
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()*&^%+-=[]{}|;:,.<>?/';
-        const charArray = chars.split('');
-        const fontSize = 14;
-        const columns = Math.floor(canvas.width / fontSize);
-        const drops = Array(columns).fill(1);
-
-        function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#0F0';
-            ctx.font = fontSize + 'px Fira Code, monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const char = charArray[Math.floor(Math.random() * charArray.length)];
-                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
+        const vertexShaderSource = `
+            attribute vec2 position;
+            void main() {
+                gl_Position = vec4(position, 0.0, 1.0);
             }
+        `;
+
+        const fragmentShaderSource = `
+            precision mediump float;
+            uniform vec2 resolution;
+            uniform float time;
+            uniform float seed;
+            
+            float random(vec2 st) {
+                return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123 + seed);
+            }
+            
+            void main() {
+                vec2 st = gl_FragCoord.xy / resolution;
+                float t = time * 0.5;
+                
+                vec2 grid = vec2(80.0, 45.0);
+                vec2 id = floor(st * grid);
+                
+                float r = random(id + floor(t * 3.0));
+                
+                float brightness = step(0.97, r) * (0.5 + 0.5 * sin(t * 10.0 + r * 20.0));
+                
+                float col = step(0.92, r) * 0.4;
+                col += brightness;
+                
+                float fade = 1.0 - st.y;
+                col *= fade;
+                
+                gl_FragColor = vec4(0.0, col * 0.9, 0.0, 1.0);
+            }
+        `;
+
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            return shader;
         }
 
-        setInterval(draw, 35);
+        function createProgram(gl, vertexShader, fragmentShader) {
+            const program = gl.createProgram();
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+            return program;
+        }
+
+        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+        const program = createProgram(gl, vertexShader, fragmentShader);
+
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            -1, -1, 1, -1, -1, 1,
+            -1, 1, 1, -1, 1, 1
+        ]), gl.STATIC_DRAW);
+
+        const positionLocation = gl.getAttribLocation(program, 'position');
+        const resolutionLocation = gl.getUniformLocation(program, 'resolution');
+        const timeLocation = gl.getUniformLocation(program, 'time');
+        const seedLocation = gl.getUniformLocation(program, 'seed');
+
+        let startTime = Date.now();
+        let mouseX = 0, mouseY = 0;
+
+        function render() {
+            const time = (Date.now() - startTime) / 1000;
+            
+            gl.useProgram(program);
+            gl.enableVertexAttribArray(positionLocation);
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+            
+            gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+            gl.uniform1f(timeLocation, time);
+            gl.uniform1f(seedLocation, Math.random() * 100);
+            
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            
+            requestAnimationFrame(render);
+        }
+        render();
+
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const coords = document.getElementById('coords');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            coords.textContent = `X: ${e.clientX.toString().padStart(3, '0')} | Y: ${e.clientY.toString().padStart(3, '0')}`;
+        });
+
+        // Hover effects
+        document.querySelectorAll('[data-hover]').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Random text glitch on click
+        document.addEventListener('click', () => {
+            const glitchText = document.querySelector('.glitch');
+            const chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`';
+            let iterations = 0;
+            const interval = setInterval(() => {
+                glitchText.setAttribute('data-text', 
+                    Array(20).fill(0).map(() => chars[Math.floor(Math.random() * chars.length)]).join('')
+                );
+                iterations++;
+                if (iterations > 5) {
+                    clearInterval(interval);
+                    glitchText.setAttribute('data-text', 'GREETINGS, DEVELOPER');
+                }
+            }, 50);
+        });
     </script>
 </body>
 </html>
