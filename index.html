@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrix - Choose Your Destiny</title>
+    <title>BlockOne987 | Developer Portal</title>
     <style>
         * {
             margin: 0;
@@ -13,196 +13,287 @@
 
         body {
             background-color: #000;
-            overflow: hidden;
-            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            color: #0F0;
         }
 
         #matrix-canvas {
             position: fixed;
             top: 0;
             left: 0;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
             z-index: 1;
+            min-height: 100vh;
+            padding: 2rem;
         }
 
-        .pill-choice {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2;
-            text-align: center;
-            color: #0F0;
-        }
-
-        .pill-choice h1 {
-            font-size: 3rem;
-            font-weight: bold;
-            letter-spacing: 0.3rem;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 10px #0F0, 0 0 20px #0F0, 0 0 30px #0F0;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        .question {
-            font-size: 1.8rem;
-            margin-bottom: 3rem;
-            opacity: 0.9;
-            letter-spacing: 0.15rem;
-            text-shadow: 0 0 8px #0F0;
-        }
-
-        .button-container {
+        header {
             display: flex;
-            gap: 3rem;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
         }
 
-        .pill-button {
-            padding: 1.5rem 3rem;
-            font-size: 1.3rem;
-            font-family: 'Courier New', monospace;
+        .logo {
+            font-size: 1.5rem;
             font-weight: bold;
-            letter-spacing: 0.1rem;
-            border: 3px solid;
-            border-radius: 50px;
-            cursor: pointer;
+            letter-spacing: 0.2rem;
+            text-shadow: 0 0 10px #0F0;
+        }
+
+        .logo span {
+            color: #00FF00;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #0F0;
             text-decoration: none;
-            display: inline-block;
+            font-size: 0.9rem;
+            letter-spacing: 0.1rem;
+            opacity: 0.7;
             transition: all 0.3s ease;
             text-transform: uppercase;
+        }
+
+        nav a:hover {
+            opacity: 1;
+            text-shadow: 0 0 10px #0F0;
+        }
+
+        main {
+            padding: 4rem 0;
+        }
+
+        .hero {
+            margin-bottom: 4rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px #0F0, 0 0 20px #0F0;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            opacity: 0.7;
+            max-width: 600px;
+        }
+
+        .sitemap {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .site-link {
+            background: rgba(0, 20, 0, 0.8);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 1.5rem;
+            text-decoration: none;
+            color: #0F0;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .pill-button::before {
+        .site-link::before {
             content: '';
             position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .site-link:hover::before {
+            left: 100%;
+        }
+
+        .site-link:hover {
+            border-color: #0F0;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3), inset 0 0 20px rgba(0, 255, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .site-link h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .site-link h3::before {
+            content: '>';
+            opacity: 0.5;
+        }
+
+        .site-link p {
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+
+        .site-link .arrow {
+            position: absolute;
+            right: 1rem;
             top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-            z-index: -1;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .pill-button:hover::before {
-            width: 300px;
-            height: 300px;
+        .site-link:hover .arrow {
+            opacity: 1;
         }
 
-        .blue-pill {
-            background-color: rgba(0, 100, 255, 0.2);
-            border-color: #0066FF;
-            color: #0066FF;
-            text-shadow: 0 0 10px #0066FF;
-            box-shadow: 0 0 20px rgba(0, 100, 255, 0.5);
-        }
-
-        .blue-pill::before {
-            background-color: rgba(0, 100, 255, 0.3);
-        }
-
-        .blue-pill:hover {
-            background-color: rgba(0, 100, 255, 0.4);
-            box-shadow: 0 0 30px rgba(0, 100, 255, 0.8), 0 0 50px rgba(0, 100, 255, 0.6);
-            transform: scale(1.1);
-            border-color: #4D94FF;
-        }
-
-        .red-pill {
-            background-color: rgba(255, 0, 0, 0.2);
-            border-color: #FF0000;
-            color: #FF0000;
-            text-shadow: 0 0 10px #FF0000;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-        }
-
-        .red-pill::before {
-            background-color: rgba(255, 0, 0, 0.3);
-        }
-
-        .red-pill:hover {
-            background-color: rgba(255, 0, 0, 0.4);
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), 0 0 50px rgba(255, 0, 0, 0.6);
-            transform: scale(1.1);
-            border-color: #FF4D4D;
-        }
-
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 10px #0F0, 0 0 20px #0F0, 0 0 30px #0F0;
-            }
-            to {
-                text-shadow: 0 0 20px #0F0, 0 0 30px #0F0, 0 0 40px #0F0;
-            }
+        footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 255, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            opacity: 0.5;
         }
 
         @media (max-width: 768px) {
-            .pill-choice h1 {
-                font-size: 2rem;
-                letter-spacing: 0.2rem;
-            }
-
-            .question {
-                font-size: 1.2rem;
-                margin-bottom: 2rem;
-            }
-
-            .button-container {
+            header {
                 flex-direction: column;
-                gap: 1.5rem;
+                gap: 1rem;
             }
 
-            .pill-button {
-                padding: 1.2rem 2.5rem;
-                font-size: 1.1rem;
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
             }
         }
     </style>
 </head>
 <body>
     <canvas id="matrix-canvas"></canvas>
-    <div class="pill-choice">
-        <h1>GREETINGS!!</h1>
-        <p class="question">Choose Your Destiny</p>
-        <div class="button-container">
-            <a href="https://blockone987.com" class="pill-button blue-pill">ENTER</a>
-            <a href="about:blank" class="pill-button red-pill">EXIT</a>
-        </div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">&lt;<span>BlockOne987</span>/&gt;</div>
+            <nav>
+                <a href="#sitemap">Sitemap</a>
+                <a href="https://github.com/blockone987" target="_blank">GitHub</a>
+                <a href="#about">About</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="hero">
+                <h1>GREETINGS, DEVELOPER</h1>
+                <p>Welcome to the digital dojo. Select your path from the sitemap below.</p>
+            </div>
+
+            <div class="sitemap" id="sitemap">
+                <a href="/projects" class="site-link">
+                    <h3>Projects</h3>
+                    <p>Code repositories and open source work</p>
+                    <span class="arrow">&rarr;</span>
+                </a>
+                
+                <a href="/tools" class="site-link">
+                    <h3>Tools</h3>
+                    <p>Developer utilities and calculators</p>
+                    <span class="arrow">&rarr;</span>
+                </a>
+                
+                <a href="/snippets" class="site-link">
+                    <h3>Snippets</h3>
+                    <p>Code snippets and templates</p>
+                    <span class="arrow">&rarr;</span>
+                </a>
+                
+                <a href="/docs" class="site-link">
+                    <h3>Docs</h3>
+                    <p>API documentation and guides</p>
+                    <span class="arrow">&rarr;</span>
+                </a>
+                
+                <a href="/blog" class="site-link">
+                    <h3>Blog</h3>
+                    <p>Tech writeups and tutorials</p>
+                    <span class="arrow">&rarr;</span>
+                </a>
+                
+                <a href="/labs" class="site-link">
+                    <h3>Labs</h3>
+                    <p>Experimental projects and prototypes</p>
+                    <span class="arrow">&rarr;</span>
+                </a>
+                
+                <a href="https://github.com/blockone987" target="_blank" class="site-link">
+                    <h3>GitHub</h3>
+                    <p>Source code and contributions</p>
+                    <span class="arrow">&rarr;</span>
+                </a>
+                
+                <a href="#contact" class="site-link">
+                    <h3>Contact</h3>
+                    <p>Get in touch or collaborate</p>
+                    <span class="arrow">&rarr;</span>
+                </a>
+            </div>
+        </main>
+
+        <footer>
+            <div>BlockOne987 &copy; 2026</div>
+            <div>System Status: ONLINE</div>
+        </footer>
     </div>
+
     <script>
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
-        const matrixArray = matrix.split("");
-
-        const fontSize = 10;
-        const columns = canvas.width / fontSize;
-
-        const drops = [];
-        for(let x = 0; x < columns; x++) {
-            drops[x] = 1;
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
+        resize();
+        window.addEventListener('resize', resize);
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()*&^%+-=[]{}|;:,.<>?/';
+        const charArray = chars.split('');
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = Array(columns).fill(1);
 
         function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.fillStyle = '#0F0';
-            ctx.font = fontSize + 'px monospace';
+            ctx.font = fontSize + 'px Fira Code, monospace';
 
-            for(let i = 0; i < drops.length; i++) {
-                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            for (let i = 0; i < drops.length; i++) {
+                const char = charArray[Math.floor(Math.random() * charArray.length)];
+                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
 
-                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
                 drops[i]++;
@@ -210,11 +301,6 @@
         }
 
         setInterval(draw, 35);
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
     </script>
 </body>
 </html>
