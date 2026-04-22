@@ -16,6 +16,11 @@
         header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(0,255,65,0.15); margin-bottom: 2rem; }
         .logo { font-size: 1.5rem; font-weight: 700; }
         .logo a { color: var(--matrix-green); text-decoration: none; }
+        .logo a:hover { text-shadow: 0 0 10px var(--matrix-green); }
+        .logo::before { content: '<'; color: var(--accent-cyan); }
+        .logo::after { content: '/>'; color: var(--accent-cyan); animation: blink 1s infinite; }
+        @keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+        
         nav { display: flex; gap: 1.5rem; }
         nav a { color: var(--matrix-green); text-decoration: none; font-size: 0.8rem; opacity: 0.6; transition: opacity 0.3s; }
         nav a:hover, nav a.active { opacity: 1; }

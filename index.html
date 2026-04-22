@@ -93,25 +93,26 @@
             font-size: 1.8rem;
             font-weight: 700;
             letter-spacing: 0.1rem;
+            position: relative;
         }
 
-        .logo a {
+        .logo .bracket {
+            color: var(--accent-cyan);
+        }
+
+        .logo .name {
             color: var(--matrix-green);
-            text-decoration: none;
-        }
-
-        .logo a:hover {
             text-shadow: 0 0 10px var(--matrix-green), 0 0 20px var(--matrix-green);
         }
 
-        .logo::before {
-            content: '<';
-            color: var(--accent-cyan);
+        .logo::after {
+            content: '_';
+            animation: blink 1s infinite;
         }
 
-        .logo::after {
-            content: '/>';
-            color: var(--accent-cyan);
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
         nav {
@@ -454,7 +455,9 @@
 
     <div class="container">
         <header>
-            <div class="logo"><a href="index.html">BlockOne987</a></div>
+            <div class="logo">
+                <span class="bracket">&lt;</span><span class="name">BlockOne987</span><span class="bracket">/&gt;</span>
+            </div>
             <nav>
                 <a href="#sitemap" data-hover>Sitemap</a>
                 <a href="https://github.com/blockone987" target="_blank" data-hover>GitHub</a>
